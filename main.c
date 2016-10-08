@@ -28,16 +28,22 @@ void read_command(char* command , char parameters[10][10] , int *number){
     while (pch != NULL)
     {
       if(first_argument == 0) {
-        //strcat(command , "/bin/");
-        strcpy(command , pch);
+        strcpy(parameters[i] , pch);
+        /*printf("%s" , parameters[i]);*/
+        strcat(command , "/bin/");
+        strcat(command , pch);
         first_argument = 1;
+        i++;
       }else{
       strcpy(parameters[i] , pch);
       i++;
       *number = *number + 1;
     }
     pch = strtok (NULL, " \n");
-    }
+  }
+
+  strcpy(parameters[i] , (char*)0x0);
+
 
   if(i > 0){
     do{
@@ -62,7 +68,7 @@ int main(){
   printf("%s" , prompt);
   read_command(command , parameters , &numberofparameters);
 
-  printf("You want to execute %s" , command);
+  printf("You want to execute %s with %d number of parameters" , command , numberofparameters);
 
   for(i = 0; i < numberofparameters; i++){
     printf(" %s " , parameters[i]);
@@ -70,15 +76,21 @@ int main(){
 
   printf("\n");
 
-  pid_t pid = fork();
+  /*pid_t pid = fork();
   if(pid == 0){
+  */
+    printf("Breakpoint\n");
     execve(command , parameters , 0);
     strcpy(command , "");
+    numberofparameters = 0;
     for(i = 0; i < numberofparameters; i++){
       strcpy(parameters[i] , "");
     }
+    /*
   }else{
+    printf("Parent will wait now!");
       waitpid(-1, &status, 0);
     }
+    */
   }
 }
